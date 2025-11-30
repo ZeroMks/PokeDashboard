@@ -1,0 +1,115 @@
+<div class="p-6 max-w-7xl mx-auto space-y-8">
+  
+  <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" 
+        alt="Pokeball Icon" 
+        class="w-10 h-10 drop-shadow-md hover:rotate-180 transition-transform duration-700 cursor-pointer"
+      >
+      <span class="tracking-tight">PokeDashboard</span>
+    </h1>
+
+    <div class="flex w-full md:w-auto gap-2">
+      <input 
+        type="text" 
+        [(ngModel)]="busqueda" 
+        (input)="buscar()"
+        placeholder="Buscar (ej: Charizard)..." 
+        class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm"
+      >
+      <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="p-10 text-center text-blue-600 animate-pulse font-medium text-lg">
+    Capturando datos de la Pokédex...
+  </div>
+  <div *ngIf="error" class="p-10 text-center text-red-600 border border-red-200 bg-red-50 rounded-lg">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!cargando && !error" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <div class="overflow-hidden rounded-xl border border-gray-200 shadow-lg bg-white">
+      <table class="w-full text-left text-sm text-gray-500">
+        <thead class="bg-gray-100 text-xs uppercase text-gray-700">
+          <tr>
+            <th class="px-6 py-4">Foto</th>
+            <th class="px-6 py-4">Nombre</th>
+            <th class="px-6 py-4">Tipo</th>
+            <th class="px-6 py-4 text-right">Peso (kg)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr *ngFor="let p of datos" class="hover:bg-blue-50 transition-colors group">
+            <td class="px-6 py-3">
+              <img [src]="p.sprites.front_default" alt="sprite" 
+                   class="w-16 h-16 group-hover:scale-110 transition-transform duration-200">
+            </td>
+            <td class="px-6 py-3 font-bold text-gray-800 capitalize text-lg">{{ p.name }}</td>
+            
+            <td class="px-6 py-3">
+              <div class="flex gap-2">
+                <span *ngFor="let t of p.types" 
+                      class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
+                  {{ t.type.name }}
+                </span>
+              </div>
+            </td>
+
+            <td class="px-6 py-3 text-right font-mono text-base">
+              {{ p.weight / 10 | number:'1.1-1' }} kg
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+   <div class="flex flex-col gap-6">
+      
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-lg">
+        <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2 text-center">
+          Experiencia Base
+        </h2>
+        <div class="relative h-48 w-full">
+          <canvas id="graficoExperiencia"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-lg flex-grow flex flex-col">
+        
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+          <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide">
+            Atributos de Combate
+          </h2>
+
+          <div class="flex bg-gray-100 p-1 rounded-lg">
+            <button 
+              (click)="!modoNivel100 ? null : toggleModoStats()"
+              [class]="!modoNivel100 ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+              class="px-3 py-1 text-xs font-bold rounded-md transition-all">
+              Base
+            </button>
+            <button 
+              (click)="modoNivel100 ? null : toggleModoStats()"
+              [class]="modoNivel100 ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+              class="px-3 py-1 text-xs font-bold rounded-md transition-all">
+              Max (Lvl 100)
+            </button>
+          </div>
+        </div>
+
+        <div class="relative flex-grow min-h-[250px]">
+          <canvas id="graficoStats"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
